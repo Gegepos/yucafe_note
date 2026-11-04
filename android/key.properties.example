@@ -1,0 +1,5 @@
+# 复制为 android/key.properties 后填入你自己的签名信息（该文件已被 .gitignore 忽略）
+storeFile=../yucafe_note.jks
+storePassword=your-store-password
+keyAlias=your-key-alias
+keyPassword=your-key-password
