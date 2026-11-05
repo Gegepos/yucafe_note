@@ -113,7 +113,9 @@ class YuCafeApp extends StatelessWidget {
           ),
         ),
       ),
-      initialRoute: StorageService.isLoggedIn ? '/' : '/login',
+      // 首帧先落到启动页：它负责初始化并从本地存储判断登录态，
+      // 所以这里不能再依赖 StorageService（此时还没 init）。
+      initialRoute: AppRoutes.splash,
       getPages: AppRoutes.pages,
     );
   }

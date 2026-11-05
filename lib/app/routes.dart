@@ -14,8 +14,10 @@ import '../ui/profile/ai_usage_page.dart';
 import '../ui/profile/change_password_page.dart';
 import '../ui/profile/edit_profile_page.dart';
 import '../ui/profile/settings_page.dart';
+import '../ui/splash/splash_page.dart';
 
 class AppRoutes {
+  static const String splash = '/splash';
   static const String home = '/';
   static const String login = '/login';
   static const String register = '/register';
@@ -30,6 +32,8 @@ class AppRoutes {
   static const String aiUsage = '/profile/ai/usage';
 
   static final pages = [
+    // 启动页不挂 AuthGuard：它自己负责初始化并决定跳登录页还是首页。
+    GetPage(name: splash, page: () => const SplashPage()),
     GetPage(
       name: home,
       page: () => const MainPage(),

@@ -134,7 +134,7 @@ class ProfilePage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('版本: 1.0.0'),
+          Text('版本: 1.0.1'),
           SizedBox(height: 8),
           Text('一款方便咖啡爱好者记录冲煮参数的应用'),
         ],

@@ -39,7 +39,9 @@ class BeanCard extends StatelessWidget {
     return Card(
       clipBehavior: Clip.antiAlias,
       elevation: expanded ? 4 : 2,
-      shadowColor: isLight ? Colors.brown.withValues(alpha: 0.2) : Colors.black45,
+      shadowColor: isLight
+          ? Colors.brown.withValues(alpha: 0.2)
+          : Colors.black45,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: selected
@@ -73,7 +75,9 @@ class BeanCard extends StatelessWidget {
                   width: 24,
                   height: 24,
                   decoration: BoxDecoration(
-                    color: selected ? theme.colorScheme.primary : Colors.black26,
+                    color: selected
+                        ? theme.colorScheme.primary
+                        : Colors.black26,
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.white, width: 1.5),
                   ),
@@ -90,7 +94,10 @@ class BeanCard extends StatelessWidget {
 
   Widget _header(BuildContext context, bool isLight) {
     final brand = bean.brand?.trim() ?? '';
-    final fresh = Freshness.from(roastDate: bean.roastDate, roastLevel: bean.roastLevel);
+    final fresh = Freshness.from(
+      roastDate: bean.roastDate,
+      roastLevel: bean.roastLevel,
+    );
     final showSubtitle = brand.isNotEmpty || fresh.isKnown;
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 10, 4, 10),
@@ -103,39 +110,48 @@ class BeanCard extends StatelessWidget {
               color: isLight ? Colors.brown.shade50 : Colors.brown.shade900,
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.coffee, size: 18,
-                color: isLight ? Colors.brown.shade400 : Colors.brown.shade200),
+            child: Icon(
+              Icons.coffee,
+              size: 18,
+              color: isLight ? Colors.brown.shade400 : Colors.brown.shade200,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(bean.name,
+                Text(
+                  bean.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
                 ),
                 if (showSubtitle) ...[
                   const SizedBox(height: 2),
                   Text.rich(
-                    TextSpan(children: [
-                      if (brand.isNotEmpty)
-                        TextSpan(
-                          text: brand,
-                          style: TextStyle(color: Colors.grey.shade600),
-                        ),
-                      if (brand.isNotEmpty && fresh.isKnown)
-                        const TextSpan(text: '  ·  '),
-                      if (fresh.isKnown)
-                        TextSpan(
-                          text: '● ${fresh.label}',
-                          style: TextStyle(
-                            color: fresh.color,
-                            fontWeight: FontWeight.w600,
+                    TextSpan(
+                      children: [
+                        if (brand.isNotEmpty)
+                          TextSpan(
+                            text: brand,
+                            style: TextStyle(color: Colors.grey.shade600),
                           ),
-                        ),
-                    ]),
+                        if (brand.isNotEmpty && fresh.isKnown)
+                          const TextSpan(text: '  ·  '),
+                        if (fresh.isKnown)
+                          TextSpan(
+                            text: '● ${fresh.label}',
+                            style: TextStyle(
+                              color: fresh.color,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                      ],
+                    ),
                     style: const TextStyle(fontSize: 12),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -145,9 +161,13 @@ class BeanCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Text('${bean.stock.toStringAsFixed(0)}g',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600,
-                color: isLight ? Colors.brown.shade700 : Colors.brown.shade200),
+          Text(
+            '${bean.stock.toStringAsFixed(0)}g',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: isLight ? Colors.brown.shade700 : Colors.brown.shade200,
+            ),
           ),
           // 独立命中区域，避免和「点卡片进详情」冲突。
           SizedBox(
@@ -158,8 +178,11 @@ class BeanCard extends StatelessWidget {
               visualDensity: VisualDensity.compact,
               tooltip: expanded ? '收起' : '展开图片',
               onPressed: onToggleExpand,
-              icon: Icon(expanded ? Icons.expand_less : Icons.expand_more,
-                  size: 20, color: Colors.grey),
+              icon: Icon(
+                expanded ? Icons.expand_less : Icons.expand_more,
+                size: 20,
+                color: Colors.grey,
+              ),
             ),
           ),
         ],
@@ -174,23 +197,37 @@ class BeanCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (hasImage)
-          ImageUtils.networkImage(bean.image, height: 150, memCacheWidth: 900)
+          // 图片单独成层：滚动时不会把整张卡片一起重绘。
+          RepaintBoundary(
+            child: ImageUtils.networkImage(
+              bean.image,
+              height: 150,
+              memCacheWidth: 900,
+            ),
+          )
         else
           Container(
             height: 72,
             color: isLight ? Colors.brown.shade50 : Colors.brown.shade900,
-            child: Icon(Icons.coffee, size: 28,
-                color: isLight ? Colors.brown.shade200 : Colors.brown.shade700),
+            child: Icon(
+              Icons.coffee,
+              size: 28,
+              color: isLight ? Colors.brown.shade200 : Colors.brown.shade700,
+            ),
           ),
         Padding(
           padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
-          child: Wrap(spacing: 6, runSpacing: 6, children: [
-            _tag(bean.roastLevel),
-            if (bean.country.isNotEmpty) _tag(bean.country),
-            if (bean.process.isNotEmpty) _tag(bean.process),
-            if (bean.roastDate.isNotEmpty) _tag('烘焙 ${bean.roastDate}'),
-            _tag('库存 ${bean.stock.toStringAsFixed(0)} g'),
-          ]),
+          child: Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              _tag(bean.roastLevel),
+              if (bean.country.isNotEmpty) _tag(bean.country),
+              if (bean.process.isNotEmpty) _tag(bean.process),
+              if (bean.roastDate.isNotEmpty) _tag('烘焙 ${bean.roastDate}'),
+              _tag('库存 ${bean.stock.toStringAsFixed(0)} g'),
+            ],
+          ),
         ),
       ],
     );
@@ -204,7 +241,10 @@ class BeanCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(4),
         border: Border.all(color: Colors.brown.shade200),
       ),
-      child: Text(text, style: TextStyle(fontSize: 11, color: Colors.brown.shade700)),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 11, color: Colors.brown.shade700),
+      ),
     );
   }
 }

@@ -1,25 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'controllers/auth_controller.dart';
-import 'controllers/bean_controller.dart';
-import 'controllers/note_controller.dart';
-import 'controllers/user_controller.dart';
-import 'controllers/dashboard_controller.dart';
-import 'controllers/main_tab_controller.dart';
-import 'controllers/ai_controller.dart';
-import 'services/api_client.dart';
+
 import 'app/app.dart';
 
-void main() async {
-  await GetStorage.init();
-  ApiClient.init();
-  Get.put(AuthController(), permanent: true);
-  Get.put(BeanController(), permanent: true);
-  Get.put(NoteController(), permanent: true);
-  Get.put(UserController(), permanent: true);
-  Get.put(DashboardController(), permanent: true);
-  Get.put(MainTabController(), permanent: true);
-  Get.put(AiController(), permanent: true);
+/// 启动链路拆成两段：
+/// 1. 这里只负责把 UI 立起来，让首帧尽快上屏；
+/// 2. 本地存储、网络层、控制器的初始化全部挪到 `SplashPage`，
+///    在启动动画播放期间完成 —— 避免 `runApp` 之前的 await 变成白屏时间。
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const YuCafeApp());
 }

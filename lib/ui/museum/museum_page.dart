@@ -96,17 +96,22 @@ class _MuseumPageState extends State<MuseumPage> {
   Future<void> _deleteSelected() async {
     if (_selected.isEmpty) return;
     final ids = _selected.toList();
-    final confirm = await Get.dialog<bool>(AlertDialog(
-      title: const Text('批量删除'),
-      content: Text('确定删除选中的 ${ids.length} 个咖啡豆？\n关联的冲煮笔记也会一并删除。'),
-      actions: [
-        TextButton(onPressed: () => Get.back(result: false), child: const Text('取消')),
-        TextButton(
-          onPressed: () => Get.back(result: true),
-          child: const Text('删除', style: TextStyle(color: Colors.red)),
-        ),
-      ],
-    ));
+    final confirm = await Get.dialog<bool>(
+      AlertDialog(
+        title: const Text('批量删除'),
+        content: Text('确定删除选中的 ${ids.length} 个咖啡豆？\n关联的冲煮笔记也会一并删除。'),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(result: false),
+            child: const Text('取消'),
+          ),
+          TextButton(
+            onPressed: () => Get.back(result: true),
+            child: const Text('删除', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
     if (confirm != true) return;
     final ok = await ctrl.deleteMany(ids);
     if (!mounted) return;
@@ -131,18 +136,28 @@ class _MuseumPageState extends State<MuseumPage> {
         }
         return RefreshIndicator(
           onRefresh: () => ctrl.fetchBeans(refresh: true),
-          child: ListView(children: const [
-            SizedBox(height: 120),
-            Center(
-              child: Column(children: [
-                Icon(Icons.coffee_outlined, size: 64, color: Colors.grey),
-                SizedBox(height: 12),
-                Text('暂无咖啡豆', style: TextStyle(fontSize: 16, color: Colors.grey)),
-                SizedBox(height: 4),
-                Text('点击下方 + 新增', style: TextStyle(fontSize: 13, color: Colors.grey)),
-              ]),
-            ),
-          ]),
+          child: ListView(
+            children: const [
+              SizedBox(height: 120),
+              Center(
+                child: Column(
+                  children: [
+                    Icon(Icons.coffee_outlined, size: 64, color: Colors.grey),
+                    SizedBox(height: 12),
+                    Text(
+                      '暂无咖啡豆',
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      '点击下方 + 新增',
+                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         );
       }
       return Column(
@@ -161,18 +176,23 @@ class _MuseumPageState extends State<MuseumPage> {
     return Container(
       color: theme.colorScheme.primary.withValues(alpha: 0.08),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Row(children: [
-        Text(
-          '已选 ${_selected.length} / ${beans.length}',
-          style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.w600),
-        ),
-        const Spacer(),
-        TextButton(
-          onPressed: () => _toggleSelectAll(beans),
-          child: Text(allSelected ? '取消全选' : '全选'),
-        ),
-        TextButton(onPressed: _exitSelecting, child: const Text('完成')),
-      ]),
+      child: Row(
+        children: [
+          Text(
+            '已选 ${_selected.length} / ${beans.length}',
+            style: TextStyle(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const Spacer(),
+          TextButton(
+            onPressed: () => _toggleSelectAll(beans),
+            child: Text(allSelected ? '取消全选' : '全选'),
+          ),
+          TextButton(onPressed: _exitSelecting, child: const Text('完成')),
+        ],
+      ),
     );
   }
 
@@ -186,7 +206,9 @@ class _MuseumPageState extends State<MuseumPage> {
           child: FilledButton.icon(
             onPressed: _selected.isEmpty ? null : _deleteSelected,
             icon: const Icon(Icons.delete_outline),
-            label: Text(_selected.isEmpty ? '请选择要删除的咖啡豆' : '删除 (${_selected.length})'),
+            label: Text(
+              _selected.isEmpty ? '请选择要删除的咖啡豆' : '删除 (${_selected.length})',
+            ),
             style: FilledButton.styleFrom(
               backgroundColor: Colors.red.shade600,
               foregroundColor: Colors.white,
@@ -226,30 +248,35 @@ class _MuseumPageState extends State<MuseumPage> {
   }
 
   /// 列表底部：加载中 / 到底了 / 什么都没（不足一页时不留空白）。
+  ///
+  /// 单独包一层 Obx：`isLoadingMore` / `hasMore` 变化时只重建这一格，
+  /// 不会带着整个列表一起重建。
   Widget _footer(int loaded) {
-    if (ctrl.isLoadingMore.value) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 16),
-        child: Center(
-          child: SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(strokeWidth: 2),
+    return Obx(() {
+      if (ctrl.isLoadingMore.value) {
+        return const Padding(
+          padding: EdgeInsets.symmetric(vertical: 16),
+          child: Center(
+            child: SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
           ),
-        ),
-      );
-    }
-    if (!ctrl.hasMore.value && loaded >= BeanController.pageSize) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Center(
-          child: Text(
-            '— 已经到底了 —',
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+        );
+      }
+      if (!ctrl.hasMore.value && loaded >= BeanController.pageSize) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Center(
+            child: Text(
+              '— 已经到底了 —',
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+            ),
           ),
-        ),
-      );
-    }
-    return const SizedBox(height: 8);
+        );
+      }
+      return const SizedBox(height: 8);
+    });
   }
 }
